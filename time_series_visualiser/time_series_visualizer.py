@@ -18,7 +18,7 @@ def draw_line_plot():
     fig, ax = plt.subplots(figsize=(20, 8))
     # Draw line plot
     line = ax.plot(df_for_line)
-    
+
     ax.set_xlabel('Date')
     ax.set_ylabel('Page Views')
     ax.set_title('Daily freeCodeCamp Forum Page Views 5/2016-12/2019')
@@ -29,12 +29,41 @@ def draw_line_plot():
 
 def draw_bar_plot():
     # Copy and modify data for monthly bar plot
-    df_bar = None
-
+    df_bar = df.copy()
+    # Group by month and year, and calculate the mean of other columns
+    df_bar = df_bar.resample('M').mean()
+    months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    labels = [i for i in range(2016, 2020)] 
+    data_dict={'Year': labels} #we will have {'Year' : 2016, 'Year': 2017 etc}
+    
+    #collects data for each month and year combination from a DataFrame
+    #,handles missing data by appending 0s, 
+    # and stores the collected data in a dictionary with the month index as the key.
+    for index, month in enumerate(months):            
+        month_data = []
+        for i in labels:
+            try:
+                month_data.append(df_bar['{}-{}'.format(i, index+1)].iloc[0]['value'])
+            except KeyError:
+                month_data.append(0)
+        data_dict[index] = month_data
+    
+    df_bar = pd.DataFrame(data_dict)
+    df_bar.columns = ["Year"] + months
     # Draw bar plot
-
-
-
+    pos = list(range(len(df_bar['Year'])))
+    width = 0.05
+    fig, ax = plt.subplots(figsize=(10, 8))
+    for q in range(12): #looping through 12 months
+        plt.bar([p + width*q for p in pos], df_bar[months[q]], width)
+    #[p + width*q for p in pos] generates a list of x-axis positions for the bars. For each position p in the list pos, it calculates the position for the current month's bars by adding width*q, where width is the width of each bar and q is the index of the current month.
+    #df_bar[months[q]] retrieves the data for the current month from the DataFrame df_bar. months[q] is the name of the current month.
+    ax.set_xlabel('Years')
+    ax.set_ylabel('Average Page Views')
+    
+    ax.set_xticks([p + 5 *width for p in pos])
+    ax.set_xticklabels(df_bar['Year'])
+    plt.legend(months, title='Months')
 
 
     # Save image and return fig (don't change this part)
