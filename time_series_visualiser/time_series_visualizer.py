@@ -60,7 +60,7 @@ def draw_bar_plot():
     #df_bar[months[q]] retrieves the data for the current month from the DataFrame df_bar. months[q] is the name of the current month.
     ax.set_xlabel('Years')
     ax.set_ylabel('Average Page Views')
-    
+
     ax.set_xticks([p + 5 *width for p in pos])
     ax.set_xticklabels(df_bar['Year'])
     plt.legend(months, title='Months')
@@ -78,10 +78,17 @@ def draw_box_plot():
     df_box['month'] = [d.strftime('%b') for d in df_box.date]
 
     # Draw box plots (using Seaborn)
-
-
-
-
+    fig = plt.figure(figsize=(20, 8))
+    ax1 = plt.subplot(1, 2, 1)
+    sns.boxplot(y=df_box['value'], x=df_box['year'])
+    ax1.set_ylabel('Page Views')
+    ax1.set_xlabel('Year')
+    ax1.set_title('Year-wise Box Plot (Trend)')
+    ax2 = plt.subplot(1, 2, 2)
+    sns.boxplot(y=df_box['value'], x=df_box['month'], order=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+    ax2.set_ylabel('Page Views')
+    ax2.set_xlabel('Month')
+    ax2.set_title('Month-wise Box Plot (Seasonality)')
 
     # Save image and return fig (don't change this part)
     fig.savefig('box_plot.png')
