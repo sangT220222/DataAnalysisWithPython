@@ -7,11 +7,17 @@ def draw_plot():
     df = pd.read_csv("/workspace/boilerplate-sea-level-predictor/epa-sea-level.csv")
 
     # Create scatter plot
-
-
+    plt.scatter(x = df['Year'].values, y = df['CSIRO Adjusted Sea Level'].values)
     # Create first line of best fit
 
-
+    #Use the linregress function from scipy.stats to get the slope and y-intercept of the line of best fit. 
+    #Plot the line of best fit over the top of the scatter plot. 
+    #Make the line go through the year 2050 to predict the sea level rise in 2050.
+    slope, y_intercept, _, _, _ = linregress(df['Year'], df['CSIRO Adjusted Sea Level'])
+    firstLineX = range(df['Year'][0], 2050)
+    firstLineY = firstLineX * slope + y_intercept
+    #plotting regression line
+    plt.plot(firstLineX, firstLineY, color='red', label='Regression line')
     # Create second line of best fit
 
 
