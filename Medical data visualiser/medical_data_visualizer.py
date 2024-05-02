@@ -34,7 +34,7 @@ def draw_cat_plot():
     # Get the figure for the output
     fig = sns.catplot(x='variable', y = 'total', col = 'cardio', hue = 'value', data = grouped_df, kind = 'bar')
 
-
+    fig.set_titles("Count of Features by Cardio")
     # Do not modify the next two lines
     fig.savefig('catplot.png')
     return fig
@@ -43,23 +43,26 @@ def draw_cat_plot():
 # Draw Heat Map
 def draw_heat_map():
     # Clean the data
-    df_heat = None
-
+    #filter data where we want ap_low is <= ap_hi
+    #filter data to include rows of height value within 2.5% and 97.5% percentile
+    #filter data to include rows of weight calue within 2.5% and 97.5% percentile
+    df_heat = df_heat = df.loc[(df["ap_lo"] <= df["ap_hi"]) & (df["height"] >= df["height"].quantile(0.025)) & (df["height"] <= df["height"].quantile(0.975)) & (df["weight"] >= df["weight"].quantile(0.025)) & (df["weight"] <= df["weight"].quantile(0.975))]
+    # print(df_heat)
     # Calculate the correlation matrix
-    corr = None
-
+    corr = df_heat.corr()
     # Generate a mask for the upper triangle
-    mask = None
-
+    mask = np.triu(np.ones_like(corr, dtype=bool))
 
 
     # Set up the matplotlib figure
-    fig, ax = None
+    fig, ax = plt.subplots(figsize=(13, 10))
 
     # Draw the heatmap with 'sns.heatmap()'
-
-
-
+    # annot shows the numbers on each cell
+    # fmt formats the number, here it's one decimal place
+    #center = 0 means the numbers will be mapped into center of cell
+    sns.heatmap(corr, mask = mask, annot = True,linewidths=.5, vmin = -.16, vmax = .32, fmt=".1f", center=0 )
+    plt.title('Correlation Matrix')
     # Do not modify the next two lines
     fig.savefig('heatmap.png')
     return fig
